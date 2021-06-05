@@ -3,11 +3,10 @@ package com.cecilireid.fibonacci;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
-import java.io.File;
-import java.io.FileWriter;
-import java.io.IOException;
+import java.io.*;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.stream.Collectors;
 
 @RestController
 @RequestMapping("fibonacci")
@@ -36,17 +35,14 @@ public class FibonacciController {
         return ResponseEntity.ok(storeSequence(sequence));
     }
 
-    /**
-     * Recursively find the Fibonacci number at the position in the sequence
-     *
-     * @param position requested position of fibonacci sequence (i.e. 8th number in sequence)
-     * @return fibonacci number at position (i.e. 21)
-     */
-    private int fibonacci(int position) {
-        if (position <= 1) {
-            return position;
-        }
-        return fibonacci(position - 1) + fibonacci(position - 2);
+    @GetMapping("getSequence")
+    public ResponseEntity<String> retrieveFibonacciSequence(@RequestParam String fileName) throws IOException {
+        return ResponseEntity.ok(getSequence(fileName));
+    }
+
+    private String getSequence(String filename) throws FileNotFoundException {
+        BufferedReader reader = new BufferedReader(new FileReader(filename));
+        return reader.lines().collect(Collectors.joining());
     }
 
     /**
@@ -93,4 +89,18 @@ public class FibonacciController {
         writer.close();
         return name;
     }
+
+    /**
+     * Recursively find the Fibonacci number at the position in the sequence
+     *
+     * @param position requested position of fibonacci sequence (i.e. 8th number in sequence)
+     * @return fibonacci number at position (i.e. 21)
+     */
+    private int fibonacci(int position) {
+        if (position <= 1) {
+            return position;
+        }
+        return fibonacci(position - 1) + fibonacci(position - 2);
+    }
+
 }
