@@ -3,6 +3,8 @@ package com.cecilireid.fibonacci;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+import java.io.File;
+import java.io.FileWriter;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
@@ -75,9 +77,20 @@ public class FibonacciController {
      * @param sequence list of ints in the fibonacci sequence
      * @return String name of the file saved
      */
-    private String storeSequence(List<Integer> sequence) {
+    private String storeSequence(List<Integer> sequence) throws IOException {
         String name = "fibonacci.txt";
-        // TODO
+        File file = new File(name);
+
+        // creates the file
+        file.createNewFile();
+
+        // creates a FileWriter Object
+        FileWriter writer = new FileWriter(file);
+
+        // Writes the content to the file
+        writer.write(sequence.toString());
+        writer.flush();
+        writer.close();
         return name;
     }
 }
