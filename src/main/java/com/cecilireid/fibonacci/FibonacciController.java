@@ -38,7 +38,12 @@ public class FibonacciController {
      */
     @PostMapping("createSequence")
     public ResponseEntity<String> generateFibonacciSequence(@RequestParam String n) {
-        List<Integer> sequence = getSequence(Integer.parseInt(n));
+        List<Integer> sequence;
+        try {
+            sequence = getSequence(n);
+        } catch (FibonacciInputException e) {
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(e.getMessage());
+        }
         String fileName;
         try {
             fileName = storeSequence(sequence);
@@ -52,14 +57,14 @@ public class FibonacciController {
     public ResponseEntity<String> retrieveFibonacciSequence(@RequestParam String fileName) {
         String sequence;
         try {
-            sequence = getSequence(fileName);
+            sequence = getSequenceByFilename(fileName);
         } catch (FileNotFoundException e) {
             return ResponseEntity.status(HttpStatus.NOT_FOUND).body("File not found. Please check request and try again " + e.getMessage());
         }
         return ResponseEntity.ok(sequence);
     }
 
-    private String getSequence(String filename) throws FileNotFoundException {
+    private String getSequenceByFilename(String filename) throws FileNotFoundException {
         BufferedReader reader = new BufferedReader(new FileReader(filename));
         return reader.lines().collect(Collectors.joining());
     }
@@ -67,10 +72,16 @@ public class FibonacciController {
     /**
      * Generate fibonacci sequence without using recursion
      *
-     * @param n number of numbers that should be included in the fibonacci sequence
+     * @param str number of numbers that should be included in the fibonacci sequence
      * @return list of integers with fibonacci sequence
      */
-    private List<Integer> getSequence(int n) {
+    private List<Integer> getSequence(String str) throws FibonacciInputException {
+        int n;
+        try {
+            n = Integer.parseInt(str);
+        } catch (NumberFormatException e) {
+            throw new FibonacciInputException("Invalid input. Please provide a valid number");
+        }
         List<Integer> sequence = new ArrayList<>();
         sequence.add(0);
         int prev = 0;
