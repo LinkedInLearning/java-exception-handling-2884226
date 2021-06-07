@@ -37,8 +37,8 @@ public class FibonacciController {
      * @return name of the file created
      */
     @PostMapping("createSequence")
-    public ResponseEntity<String> generateFibonacciSequence(@RequestParam int n) {
-        List<Integer> sequence = getSequence(n);
+    public ResponseEntity<String> generateFibonacciSequence(@RequestParam String n) {
+        List<Integer> sequence = getSequence(Integer.parseInt(n));
         String fileName;
         try {
             fileName = storeSequence(sequence);
