@@ -20,7 +20,7 @@ public class FibonacciController {
      * @return the n-th fibonacci number in the sequence
      */
     @GetMapping("findNumber")
-    public ResponseEntity<Integer> findFibonacciNumber(@RequestParam int n) {
+    public ResponseEntity<Integer> findFibonacciNumber(@RequestParam int n) throws FibonacciOutOfRangeException{
         return ResponseEntity.ok(fibonacci(n));
     }
 
@@ -103,9 +103,12 @@ public class FibonacciController {
      * @param position requested position of fibonacci sequence (i.e. 8th number in sequence)
      * @return fibonacci number at position (i.e. 21)
      */
-    private int fibonacci(int position) {
+    private int fibonacci(int position) throws FibonacciOutOfRangeException {
         if (position <= 1) {
             return position;
+        }
+        if (position >= 8) {
+            throw new FibonacciOutOfRangeException(String.format("Requested position %s is too large. Please try again.", position));
         }
         return fibonacci(position - 1) + fibonacci(position - 2);
     }
