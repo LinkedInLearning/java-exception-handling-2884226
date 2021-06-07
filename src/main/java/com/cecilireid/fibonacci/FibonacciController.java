@@ -28,6 +28,9 @@ public class FibonacciController {
             fibNum = fibonacci(n);
         } catch (FibonacciOutOfRangeException e) {
             return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(e.getMessage());
+        } catch (Exception e) {
+            // logging/metrics
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("Uh oh! Reach out to support me@cecilireid.com");
         }
         return ResponseEntity.ok(String.valueOf(fibNum));
     }
