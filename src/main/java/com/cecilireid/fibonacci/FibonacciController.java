@@ -106,7 +106,7 @@ public class FibonacciController {
         } catch (NumberFormatException e) {
             throw new FibonacciInputException("Invalid input. Please provide a valid number");
         }
-        List<Integer> sequence = new ArrayList<>();
+        List<Integer> sequence = null;
         sequence.add(0);
         int prev = 0;
         int curr = 1;
