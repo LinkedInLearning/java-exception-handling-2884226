@@ -20,8 +20,14 @@ public class FibonacciController {
      * @return the n-th fibonacci number in the sequence
      */
     @GetMapping("findNumber")
-    public ResponseEntity<Integer> findFibonacciNumber(@RequestParam int n) throws FibonacciOutOfRangeException{
-        return ResponseEntity.ok(fibonacci(n));
+    public ResponseEntity<String> findFibonacciNumber(@RequestParam int n) {
+        int fibNum;
+        try {
+            fibNum = fibonacci(n);
+        } catch (FibonacciOutOfRangeException e) {
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(e.getMessage());
+        }
+        return ResponseEntity.ok(String.valueOf(fibNum));
     }
 
     /**
@@ -31,13 +37,19 @@ public class FibonacciController {
      * @return name of the file created
      */
     @PostMapping("createSequence")
-    public ResponseEntity<String> generateFibonacciSequence(@RequestParam int n) throws IOException {
+    public ResponseEntity<String> generateFibonacciSequence(@RequestParam int n) {
         List<Integer> sequence = getSequence(n);
-        return ResponseEntity.ok(storeSequence(sequence));
+        String fileName;
+        try {
+            fileName = storeSequence(sequence);
+        } catch (IOException e) {
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(e.getMessage());
+        }
+        return ResponseEntity.ok(fileName);
     }
 
     @GetMapping("getSequence")
-    public ResponseEntity<String> retrieveFibonacciSequence(@RequestParam String fileName) throws IOException {
+    public ResponseEntity<String> retrieveFibonacciSequence(@RequestParam String fileName) {
         String sequence;
         try {
             sequence = getSequence(fileName);
