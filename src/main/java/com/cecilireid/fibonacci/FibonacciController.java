@@ -76,7 +76,16 @@ public class FibonacciController {
     public ResponseEntity<String> getRatio(@RequestParam int n) throws FibonacciOutOfRangeException {
         int dividend = fibonacci(n);
         int divisor = fibonacci(n-1);
-        return ResponseEntity.ok(String.valueOf(dividend / divisor));
+        if (divisor == 0) {
+            return ResponseEntity.ok("0");
+        }
+        int result;
+        try {
+            result = dividend / divisor;
+        } catch (ArithmeticException e) {
+            return ResponseEntity.ok("0");
+        }
+        return ResponseEntity.ok(String.valueOf(result));
     }
 
     private String getSequenceByFilename(String filename) throws FileNotFoundException {
