@@ -48,9 +48,9 @@ public class FibonacciController {
             sequence = getSequence(n, null);
         } catch (FibonacciInputException e) {
             return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(e.getMessage());
-        } catch (NullPointerException e) {
-            // Not ideal to do this
-            return ResponseEntity.status(HttpStatus.I_AM_A_TEAPOT).body("NPE");
+        }  catch (Exception e) {
+            // logging/metrics
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("Uh oh! Reach out to support me@cecilireid.com");
         }
         String fileName;
         try {
@@ -68,6 +68,9 @@ public class FibonacciController {
             sequence = getSequenceByFilename(fileName);
         } catch (FileNotFoundException e) {
             return ResponseEntity.status(HttpStatus.NOT_FOUND).body("File not found. Please check request and try again " + e.getMessage());
+        }  catch (Exception e) {
+            // logging/metrics
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("Uh oh! Reach out to support me@cecilireid.com");
         }
         return ResponseEntity.ok(sequence);
     }
@@ -79,17 +82,23 @@ public class FibonacciController {
      * @return the golden ratio between n index and n-1 index
      */
     @GetMapping("findRatio")
-    public ResponseEntity<String> getRatio(@RequestParam int n) throws FibonacciOutOfRangeException {
-        int dividend = fibonacci(n);
-        int divisor = fibonacci(n-1);
-        if (divisor == 0) {
-            return ResponseEntity.ok("0");
-        }
+    public ResponseEntity<String> getRatio(@RequestParam int n) {
         int result;
         try {
+            int dividend = fibonacci(n);
+            int divisor = fibonacci(n-1);
+            if (divisor == 0) {
+                return ResponseEntity.ok("0");
+            }
             result = dividend / divisor;
         } catch (ArithmeticException e) {
             return ResponseEntity.ok("0");
+        } catch (FibonacciOutOfRangeException e) {
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(e.getMessage());
+        }
+        catch (Exception e) {
+            // logging/metrics
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("Uh oh! Reach out to support me@cecilireid.com");
         }
         return ResponseEntity.ok(String.valueOf(result));
     }
