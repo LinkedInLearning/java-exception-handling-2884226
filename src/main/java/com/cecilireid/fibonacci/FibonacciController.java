@@ -42,9 +42,12 @@ public class FibonacciController {
     public ResponseEntity<String> generateFibonacciSequence(@RequestParam String n) {
         List<Integer> sequence;
         try {
-            sequence = getSequence(n);
+            sequence = getSequence(n, null);
         } catch (FibonacciInputException e) {
             return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(e.getMessage());
+        } catch (NullPointerException e) {
+            // Not ideal to do this
+            return ResponseEntity.status(HttpStatus.I_AM_A_TEAPOT).body("NPE");
         }
         String fileName;
         try {
@@ -99,14 +102,16 @@ public class FibonacciController {
      * @param str number of numbers that should be included in the fibonacci sequence
      * @return list of integers with fibonacci sequence
      */
-    private List<Integer> getSequence(String str) throws FibonacciInputException {
+    private List<Integer> getSequence(String str, List<Integer> sequence) throws FibonacciInputException {
         int n;
         try {
             n = Integer.parseInt(str);
         } catch (NumberFormatException e) {
             throw new FibonacciInputException("Invalid input. Please provide a valid number");
         }
-        List<Integer> sequence = null;
+        if (sequence == null) {
+            sequence = new ArrayList<>();
+        }
         sequence.add(0);
         int prev = 0;
         int curr = 1;
