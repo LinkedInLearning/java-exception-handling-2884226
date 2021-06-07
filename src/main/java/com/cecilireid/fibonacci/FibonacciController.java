@@ -5,6 +5,8 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.io.*;
+import java.math.BigDecimal;
+import java.math.RoundingMode;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Collectors;
@@ -62,6 +64,19 @@ public class FibonacciController {
             return ResponseEntity.status(HttpStatus.NOT_FOUND).body("File not found. Please check request and try again " + e.getMessage());
         }
         return ResponseEntity.ok(sequence);
+    }
+
+    /**
+     * Determine the golden ratio for given index in array
+     *
+     * @param n position of the fibonacci number requested
+     * @return the golden ratio between n index and n-1 index
+     */
+    @GetMapping("findRatio")
+    public ResponseEntity<String> getRatio(@RequestParam int n) throws FibonacciOutOfRangeException {
+        int dividend = fibonacci(n);
+        int divisor = fibonacci(n-1);
+        return ResponseEntity.ok(String.valueOf(dividend / divisor));
     }
 
     private String getSequenceByFilename(String filename) throws FileNotFoundException {
